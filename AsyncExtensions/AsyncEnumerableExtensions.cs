@@ -7,7 +7,7 @@ namespace IllusionistSoft.AsyncExtensions
 {
     public static class AsyncEnumerableExtensions
     {
-        public static Task<List<T>> ToListAsync<T>(
+        public static ValueTask<List<T>> ToListAsync<T>(
             this IAsyncEnumerable<T> source,
             CancellationToken cancellationToken = default)
         {
@@ -31,15 +31,15 @@ namespace IllusionistSoft.AsyncExtensions
                     }
                     else
                     {
-                        var enumeratorCopy = enumerator;
+                        var result = WaitEnumeratorAsync(task, list, enumerator);
                         enumerator = null;
-                        return WaitEnumeratorAsync(task, list, enumeratorCopy);
+                        return result;
                     }
                 } while (isResult);
             }
             catch (Exception exception)
             {
-                return Task.FromException<List<T>>(exception);
+                return new ValueTask<List<T>>(Task.FromException<List<T>>(exception));
             }
             finally
             {
@@ -57,15 +57,15 @@ namespace IllusionistSoft.AsyncExtensions
                 }
             }
 
-            return disposedTask == null ? Task.FromResult(list) : WaitDisposeAsync(disposedTask, list);
+            return disposedTask == null ? new ValueTask<List<T>>(list) : WaitDisposeAsync(disposedTask, list);
 
-            static async Task<List<T>> WaitDisposeAsync(Task task, List<T> list)
+            static async ValueTask<List<T>> WaitDisposeAsync(Task task, List<T> list)
             {
                 await task.ConfigureAwait(false);
                 return list;
             }
 
-            static async Task<List<T>> WaitEnumeratorAsync(
+            static async ValueTask<List<T>> WaitEnumeratorAsync(
                 ValueTask<bool> task,
                 List<T> list,
                 IAsyncEnumerator<T> enumerator)
@@ -88,30 +88,30 @@ namespace IllusionistSoft.AsyncExtensions
             }
         }
 
-        public static Task<T[]> ToArrayAsync<T>(
+        public static ValueTask<T[]> ToArrayAsync<T>(
             this IAsyncEnumerable<T> source,
             CancellationToken cancellationToken = default)
         {
-            Task<List<T>> task;
+            ValueTask<List<T>> task;
             try
             {
                 task = ToListAsync(source, cancellationToken);
             }
             catch (Exception ex)
             {
-                return Task.FromException<T[]>(ex);
+                return new ValueTask<T[]>(Task.FromException<T[]>(ex));
             }
 
             if (task.IsCompletedSuccessfully)
             {
-                return Task.FromResult(task.Result.ToArray());
+                return new ValueTask<T[]>(task.Result.ToArray());
             }
             else
             {
                 return WaitAsync(task);
             }
 
-            static async Task<T[]> WaitAsync(Task<List<T>> task)
+            static async ValueTask<T[]> WaitAsync(ValueTask<List<T>> task)
             {
                 var list = await task.ConfigureAwait(false);
                 return list.ToArray();

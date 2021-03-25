@@ -4,13 +4,10 @@ using BenchmarkDotNet.Attributes;
 
 namespace IllusionistSoft.AsyncExtensions.Benchmark
 {
+    [MemoryDiagnoser]
     public class AwaitVsIsCompleted
     {
-        private const int Count = 10000;
-
-        public AwaitVsIsCompleted()
-        {
-        }
+        private const int Count = 100_000;
 
         [Benchmark]
         public async Task ToListAll() => await GetAll().ToListAsync();
@@ -59,9 +56,16 @@ namespace IllusionistSoft.AsyncExtensions.Benchmark
             }
         }
 
-        private async Task<int> Get(int value)
+        private async ValueTask<int> Get(int value)
         {
-            await Task.Delay(value);
+            if (value == 0)
+            {
+                await Task.Delay(value);
+            }
+            else
+            {
+                await Task.Yield();
+            }
             return 1;
         }
     }

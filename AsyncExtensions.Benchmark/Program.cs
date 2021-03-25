@@ -1,4 +1,3 @@
-using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
 
 namespace IllusionistSoft.AsyncExtensions.Benchmark
@@ -7,7 +6,6 @@ namespace IllusionistSoft.AsyncExtensions.Benchmark
     {
         public static void Main(string[] args)
         {
-            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args, new DebugInProcessConfig());
             BenchmarkRunner.Run<AwaitVsIsCompleted>();
         }
     }
