@@ -1,3 +1,6 @@
+<details>
+  <summary>Apple M1 Pro, 1 CPU, 10 logical and 10 physical cores</summary>
+
 ``` ini
 
 BenchmarkDotNet=v0.13.5, OS=macOS Ventura 13.1 (22C65) [Darwin 22.2.0]
@@ -49,3 +52,5 @@ Apple M1 Pro, 1 CPU, 10 logical and 10 physical cores
 |    HalfAwaitHalfNotAwaitSimple | 100000 | 28,028,002.7 ns | 1,200,622.66 ns | 3,521,218.42 ns |  933.3333 | 333.3333 | 266.6667 |  6649923 B |
 |      HalfAwaitHalfNotAwaitTask | 100000 | 31,057,337.3 ns | 1,773,282.68 ns | 5,228,563.98 ns |  968.7500 | 375.0000 | 281.2500 |  6650015 B |
 | HalfAwaitHalfNotAwaitValueTask | 100000 | 34,712,046.2 ns | 1,186,687.28 ns | 3,498,974.21 ns |  937.5000 | 312.5000 | 250.0000 |  6649932 B |
+
+</details>
