@@ -15,10 +15,4 @@ internal static class SimpleAsyncEnumerableExtensions
 
         return list;
     }
-
-    public static async Task<T[]> SimpleToArrayAsync<T>(this IAsyncEnumerable<T> source)
-    {
-        var list = await SimpleToListAsync(source).ConfigureAwait(false);
-        return list.ToArray();
-    }
 }

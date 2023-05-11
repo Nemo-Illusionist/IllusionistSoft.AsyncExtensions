@@ -7,28 +7,31 @@ namespace IllusionistSoft.AsyncExtensions.Benchmark;
 [MemoryDiagnoser]
 public class AwaitVsIsCompleted
 {
-    [Params(10, 1_000, 100_000)]
+    [Params(10, 1_000, 10_000, 100_000)]
     public int Count;
 
     [Benchmark]
-    public async Task ToListAll() => await GetAll().ToListAsync();
-
+    public async Task AllNotAwaitSimple() => await GetAll().SimpleToListAsync();
     [Benchmark]
-    public async Task SimpleToListAll() => await GetAll().SimpleToListAsync();
-
-
+    public async Task AllNotAwaitTask() => await GetAll().ToListAsync();
     [Benchmark]
-    public async Task ToListAllAwait() => await GetAllAwait().ToListAsync();
-
-    [Benchmark]
-    public async Task SimpleToListAllAwait() => await GetAllAwait().SimpleToListAsync();
+    public async Task AllNotAwaitValueTask() => await GetAll().ToListValueTaskAsync();
 
 
     [Benchmark]
-    public async Task ToListAllHalfAwait() => await GetHalfAwait().ToListAsync();
+    public async Task AllAwaitSimple() => await GetAllAwait().SimpleToListAsync();
+    [Benchmark]
+    public async Task AllAwaitTask() => await GetAllAwait().ToListAsync();
+    [Benchmark]
+    public async Task AllAwaitValueTask() => await GetAllAwait().ToListValueTaskAsync();
+
 
     [Benchmark]
-    public async Task SimpleToListAllHalfAwait() => await GetHalfAwait().SimpleToListAsync();
+    public async Task HalfAwaitHalfNotAwaitSimple() => await GetHalfAwait().SimpleToListAsync();
+    [Benchmark]
+    public async Task HalfAwaitHalfNotAwaitTask() => await GetHalfAwait().ToListAsync();
+    [Benchmark]
+    public async Task HalfAwaitHalfNotAwaitValueTask() => await GetHalfAwait().ToListValueTaskAsync();
 
 
     private async IAsyncEnumerable<int> GetAll()
