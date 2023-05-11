@@ -60,7 +60,7 @@ public class AwaitVsIsCompleted
         }
     }
 
-    private static async ValueTask<int> Get(bool yield)
+    private static async Task<int> Get(bool yield)
     {
         if (yield)
         {
