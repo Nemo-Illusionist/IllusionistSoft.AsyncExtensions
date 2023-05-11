@@ -57,7 +57,9 @@ public static class AsyncEnumerableExtensions
             }
         }
 
-        return disposedTask == null ? Task.FromResult(list) : WaitDisposeAsync(disposedTask, list);
+        return disposedTask == null
+            ? Task.FromResult(list)
+            : WaitDisposeAsync(disposedTask, list);
 
         static async Task<List<T>> WaitDisposeAsync(Task task, List<T> list)
         {
@@ -102,14 +104,9 @@ public static class AsyncEnumerableExtensions
             return Task.FromException<T[]>(ex);
         }
 
-        if (task.IsCompletedSuccessfully)
-        {
-            return Task.FromResult(task.Result.ToArray());
-        }
-        else
-        {
-            return WaitAsync(task);
-        }
+        return task.IsCompletedSuccessfully
+            ? Task.FromResult(task.Result.ToArray())
+            : WaitAsync(task);
 
         static async Task<T[]> WaitAsync(Task<List<T>> task)
         {
