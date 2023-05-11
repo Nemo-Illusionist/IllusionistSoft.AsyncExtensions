@@ -7,7 +7,8 @@ namespace IllusionistSoft.AsyncExtensions.Benchmark;
 [MemoryDiagnoser]
 public class AwaitVsIsCompleted
 {
-    private const int Count = 100_000;
+    [Params(10, 1_000, 100_000)]
+    public int Count;
 
     [Benchmark]
     public async Task ToListAll() => await GetAll().ToListAsync();
@@ -15,11 +16,13 @@ public class AwaitVsIsCompleted
     [Benchmark]
     public async Task SimpleToListAll() => await GetAll().SimpleToListAsync();
 
+
     [Benchmark]
     public async Task ToListAllAwait() => await GetAllAwait().ToListAsync();
 
     [Benchmark]
     public async Task SimpleToListAllAwait() => await GetAllAwait().SimpleToListAsync();
+
 
     [Benchmark]
     public async Task ToListAllHalfAwait() => await GetHalfAwait().ToListAsync();
@@ -27,45 +30,43 @@ public class AwaitVsIsCompleted
     [Benchmark]
     public async Task SimpleToListAllHalfAwait() => await GetHalfAwait().SimpleToListAsync();
 
+
     private async IAsyncEnumerable<int> GetAll()
     {
-        for (int i = 0; i < Count; i++)
+        for (var i = 0; i < Count; i++)
         {
-            yield return await Get(0);
+            yield return await Get(false);
         }
     }
 
     private async IAsyncEnumerable<int> GetHalfAwait()
     {
-        for (int i = 0; i < Count / 2; i++)
+        for (var i = 0; i < Count / 2; i++)
         {
-            yield return await Get(0);
+            yield return await Get(false);
         }
 
-        for (int i = 0; i < Count / 2; i++)
+        for (var i = 0; i < Count / 2; i++)
         {
-            yield return await Get(1000);
+            yield return await Get(true);
         }
     }
 
     private async IAsyncEnumerable<int> GetAllAwait()
     {
-        for (int i = 0; i < Count; i++)
+        for (var i = 0; i < Count; i++)
         {
-            yield return await Get(1000);
+            yield return await Get(true);
         }
     }
 
-    private async ValueTask<int> Get(int value)
+    private static async ValueTask<int> Get(bool yield)
     {
-        if (value == 0)
-        {
-            await Task.Delay(value);
-        }
-        else
+        if (yield)
         {
             await Task.Yield();
         }
+
         return 1;
     }
 }
